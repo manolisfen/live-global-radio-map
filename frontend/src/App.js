@@ -18,7 +18,7 @@ function App() {
   const [stations, setStations] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/stations/Greece")
+    axios.get("/api/stations/Greece")
       .then(res => {
         const stationsWithLocation = res.data.filter(
           station => station.geo_lat && station.geo_long
