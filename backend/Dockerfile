@@ -2,15 +2,22 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
 RUN apt-get update && apt-get install -y \
     iputils-ping \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
+
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
+
+RUN chown -R appuser:appuser /app
+
+USER appuser
 
 EXPOSE 8000
 
