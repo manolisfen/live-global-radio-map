@@ -54,6 +54,29 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+  
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - public_net
+      - private_net
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 10s
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - public_net
+    depends_on:
+      prometheus:
+        condition: service_healthy
 
 networks:
   public_net:
@@ -61,3 +84,4 @@ networks:
   private_net:
     driver: bridge
     internal: true
+
